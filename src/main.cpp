@@ -48,6 +48,7 @@
 #include <daemon_utils/auto_shutdown_service.h>
 #include "settings.h"
 #include "imgui_ui.h"
+#include <sstream>
 #include <mcpelauncher/apkinfo.h>
 
 struct RpcCallbackServer : daemon_utils::auto_shutdown_service {
