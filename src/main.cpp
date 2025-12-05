@@ -401,14 +401,6 @@ Hardware	: Qualcomm Technologies, Inc MSM8998
             Log::info("FMOD", "Failed to load host libfmod: '%s', use pulseaudio/sdl3 backend with android fmod if available", e.what());
         }
     }
-    if(!fmodLoaded) {
-#ifdef HAVE_SDL3AUDIO
-        SDL_Init(SDL_INIT_AUDIO);
-        SDL_SetHint(SDL_HINT_AUDIO_DEVICE_APP_ICON_NAME, "mcpelauncher-ui-qt");
-        SDL_SetHint(SDL_HINT_AUDIO_DEVICE_STREAM_NAME, "Minecraft");
-        FakeAudio::updateDefaults();
-#endif
-    }
     FakeEGL::setProcAddrFunction((void* (*)(const char*))windowManager->getProcAddrFunc());
     FakeEGL::installLibrary();
     if(options.graphicsApi == GraphicsApi::OPENGL_ES2) {
