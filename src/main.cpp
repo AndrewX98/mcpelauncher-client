@@ -439,6 +439,7 @@ Hardware	: Qualcomm Technologies, Inc MSM8998
                                                     });
 #endif
 
+    JniSupport support;
     ModLoader modLoader;
     if(!freeOnly.get()) {
         modLoader.loadModsFromDirectory(PathHelper::getPrimaryDataDirectory() + "mods/", true);
@@ -563,7 +564,7 @@ Hardware	: Qualcomm Technologies, Inc MSM8998
     }
 
     Log::info("Launcher", "Initializing JNI");
-    JniSupport support;
+
     FakeLooper::setJniSupport(&support);
     support.registerMinecraftNatives(+[](const char* sym) {
         return linker::dlsym(handle, sym);
