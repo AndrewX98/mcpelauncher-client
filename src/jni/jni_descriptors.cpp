@@ -22,6 +22,7 @@
 #include "jbase64.h"
 #include "arrays.h"
 #include "locale.h"
+#include "playfab.h"
 #include "signature.h"
 #include "uuid.h"
 #ifndef NO_OPENSSL
@@ -363,13 +364,16 @@ END_NATIVE_DESCRIPTOR
 BEGIN_NATIVE_DESCRIPTOR(Signature){Function<&Signature::initVerify>{}, "initVerify"},
     {Function<&Signature::verify>{}, "verify"},
     {Function<&Signature::getInstance>{}, "getInstance"},
+    END_NATIVE_DESCRIPTOR
+
+    BEGIN_NATIVE_DESCRIPTOR(FMOD){Function<&FMOD::checkInit>{}, "checkInit"},
+    {Function<&FMOD::supportsAAudio>{}, "supportsAAudio"},
+    {Function<&FMOD::supportsLowLatency>{}, "supportsLowLatency"},
+    {Function<&FMOD::getAssetManager>{}, "getAssetManager"},
+    END_NATIVE_DESCRIPTOR
+
+    BEGIN_NATIVE_DESCRIPTOR(AssetManager)
 END_NATIVE_DESCRIPTOR
 
-BEGIN_NATIVE_DESCRIPTOR(FMOD){Function<&FMOD::checkInit>{}, "checkInit"},
-{Function<&FMOD::supportsAAudio>{}, "supportsAAudio"},
-{Function<&FMOD::supportsLowLatency>{}, "supportsLowLatency"},
-{Function<&FMOD::getAssetManager>{}, "getAssetManager"},
-END_NATIVE_DESCRIPTOR
-
-BEGIN_NATIVE_DESCRIPTOR(AssetManager)
+BEGIN_NATIVE_DESCRIPTOR(AndroidJniHelperMultiplayer){Function<&AndroidJniHelperMultiplayer::createUUID>{}, "createUUID"},
     END_NATIVE_DESCRIPTOR
