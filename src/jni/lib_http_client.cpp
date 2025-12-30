@@ -40,10 +40,11 @@ std::shared_ptr<HttpClientRequest> HttpClientRequest::createClientRequest() {
 }
 
 void HttpClientRequest::setHttpUrl(std::shared_ptr<FakeJni::JString> url) {
+    this->url = url->asStdString();
 #ifndef NDEBUG
-    Log::trace("HttpClient", "URL: %s", url->asStdString().c_str());
+    Log::trace("HttpClient", "URL: %s", this->url.c_str());
 #endif
-    curl_easy_setopt(curl, CURLOPT_URL, url->asStdString().c_str());
+    curl_easy_setopt(curl, CURLOPT_URL, this->url.c_str());
 }
 
 void HttpClientRequest::setHttpMethodAndBody(std::shared_ptr<FakeJni::JString> method,
@@ -139,6 +140,22 @@ void HttpClientRequest::setHttpHeader(std::shared_ptr<FakeJni::JString> name, st
 }
 
 void HttpClientRequest::doRequestAsync(FakeJni::JLong sourceCall) {
+    if(this->url.find("OneCollector") != std::string::npos) {
+        Log::info("HttpClient", "Blocking OneCollector request to prevent recursion: %s", this->url.c_str());
+        FakeJni::LocalFrame frame;
+        if(NetworkObserver::getDescriptor()->getMethod("(Ljava/lang/String;)V", "Log")) {
+            auto method = getClass().getMethod("(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V", "OnRequestFailed");
+            method->invoke(frame.getJniEnv(), this, sourceCall, frame.getJniEnv().createLocalReference(std::make_shared<FakeJni::JString>("Error")),
+                           frame.getJniEnv().createLocalReference(std::make_shared<FakeJni::JString>("Blocked")),
+                           frame.getJniEnv().createLocalReference(std::make_shared<FakeJni::JString>("Blocked OneCollector")),
+                           false);
+        } else {
+            auto method = getClass().getMethod("(JLjava/lang/String;)V", "OnRequestFailed");
+            method->invoke(frame.getJniEnv(), this, sourceCall, frame.getJniEnv().createLocalReference(std::make_shared<FakeJni::JString>("Error")));
+        }
+        return;
+    }
+
     call_handle = sourceCall;
     auto me = this->weak_from_this();
     FakeJni::LocalFrame frame;
@@ -288,3 +305,4 @@ void NativeOutputStream::WriteAll(std::shared_ptr<FakeJni::JByteArray> data) {
     auto method = getClass().getMethod("(J[BII)V", "nativeWrite");
     method->invoke(frame.getJniEnv(), this, call_handle, frame.getJniEnv().createLocalReference(data), (FakeJni::JInt)0, (FakeJni::JInt)data->getSize());
 }
+
