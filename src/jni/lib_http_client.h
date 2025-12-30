@@ -58,6 +58,7 @@ private:
     std::vector<signed char> response;
     std::vector<ResponseHeader> headers;
     std::vector<char> body;
+    std::string url;
     std::string method;
     FakeJni::JLong call_handle;
 
